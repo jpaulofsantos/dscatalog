@@ -14,7 +14,7 @@ public class CategoryService  {
     @Autowired
     CategoryRepository categoryRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Category> findAll(){
         return categoryRepository.findAll();
     }
