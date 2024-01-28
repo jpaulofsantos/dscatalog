@@ -5,6 +5,8 @@ import com.developer.dscatalog.entities.Category;
 import com.developer.dscatalog.services.CategoryService;
 import jakarta.persistence.GeneratedValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,8 +23,8 @@ public class CategoryResource {
     CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> findAll() {
-        List<CategoryDTO> list = categoryService.findAll();
+    public ResponseEntity<Page<CategoryDTO>> findAllPaged(Pageable pageable) {
+        Page<CategoryDTO> list = categoryService.findAllPaged(pageable);
         return ResponseEntity.ok(list);
     }
 
@@ -37,5 +39,17 @@ public class CategoryResource {
         categoryDTO = categoryService.insert(categoryDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoryDTO.getId()).toUri();
         return ResponseEntity.created(uri).body(categoryDTO);
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO catDTO = categoryService.update(id, categoryDTO);
+        return ResponseEntity.ok(catDTO);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) { //Void pois o corpo da resposta será vazio
+        categoryService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
