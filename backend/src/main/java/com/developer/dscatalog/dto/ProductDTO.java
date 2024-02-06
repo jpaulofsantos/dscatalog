@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ProductDTO implements Serializable {
 
@@ -47,6 +48,11 @@ public class ProductDTO implements Serializable {
         for (Category category : product.getCategories()) {
             categories.add(new CategoryDTO(category));
         }
+    }
+
+    public ProductDTO(Product product, Set<Category> categories) {
+        this(product);
+        categories.forEach(category -> this.categories.add(new CategoryDTO(category)));
     }
 
     public Long getId() {
