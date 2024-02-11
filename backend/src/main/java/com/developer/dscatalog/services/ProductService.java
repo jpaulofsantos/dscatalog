@@ -8,6 +8,7 @@ import com.developer.dscatalog.repositories.CategoryRepository;
 import com.developer.dscatalog.repositories.ProductRepository;
 import com.developer.dscatalog.services.exceptions.DatabaseException;
 import com.developer.dscatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -49,10 +50,16 @@ public class ProductService {
 
     @Transactional
     public ProductDTO update(ProductDTO productDTO, Long id) {
-        Product product = productRepository.getReferenceById(id);
-        copyDtoToEntity(productDTO, product);
-        product = productRepository.save(product);
-        return new ProductDTO(product);
+        try
+        {
+            Product product = productRepository.getReferenceById(id);
+            copyDtoToEntity(productDTO, product);
+            product = productRepository.save(product);
+            return new ProductDTO(product);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Resource not found");
+        }
+
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
